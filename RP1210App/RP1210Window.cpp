@@ -46,6 +46,7 @@ void RP1210Window::OnConnect()
 	if (bRe)
 	{
 		int a = 100;
+		int b = 100;
 	}
 
 }

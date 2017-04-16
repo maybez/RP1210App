@@ -3,5 +3,16 @@
 ################################################################################
 
 /.vs/RP1210App/v14/.suo
-/RP1210App/x64/Debug/RP1210App.log
 /RP1210App.VC.db
+/RP1210App.VC.VC.opendb
+/RP1210App/GeneratedFiles
+/RP1210App/Debug
+/RP1210App/Release
+/RP1210App/x64/Debug
+/RP1210App/x64/Release
+/x64/Debug
+/x64/Release
+/Win32/Debug
+/Win32/Release
+/Debug
+
