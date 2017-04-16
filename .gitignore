@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/.vs/RP1210App/v14/.suo
+/RP1210App/x64/Debug/RP1210App.log
+/RP1210App.VC.db
