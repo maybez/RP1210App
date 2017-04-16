@@ -17,11 +17,15 @@ public:
 	static RP1210Core* GetInstance(); 
 	~RP1210Core();
 
-	bool LoadRp1210DLL(QString DLLPath);
+	DWORD LoadRp1210DLL(QString DLLPath);
 	void UnLoadRp1210DLL(); 
 
+
 public:
-	
+	short ClientConnect(short DeviceId, QString Protocol,long SendBufferLen = 0,long ReceiveBufferLen = 0,bool IsAppPacketizingIncomingMsgs = false);
+	short ClientDisconnect();
+
+private:	
 	// 4/16/2017 : ZH : 动态库导出函数指针定义
 	fxRP1210_ClientConnect           pRP1210_ClientConnect;
 	fxRP1210_ClientDisconnect        pRP1210_ClientDisconnect;
@@ -38,6 +42,9 @@ private:
 	HINSTANCE                        hRP1210DLL;     // 4/16/2017 : ZH : 动态库句柄
 	static RP1210Core*               theRp1210Instance;
 
+
+private:
+	short     ClientID;    // RP1210_ClientConnect调用成功后返回的客户端id,后面动态库的调用都需要使用到此函数。
 };
 
 

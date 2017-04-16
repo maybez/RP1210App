@@ -9,6 +9,7 @@ class RP1210Window : public QDialog
 
 public:
     RP1210Window(QWidget *parent = Q_NULLPTR);
+	~RP1210Window();
 
 private:
     Ui::RP1210WindowClass ui;
@@ -23,5 +24,6 @@ private:
 
 protected slots:
 	void OnAutoBaudRate(bool bAuto);
-	void OnConnect(); 
+	void OnConnect();
+	void OnDisConnect();
 };

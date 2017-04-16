@@ -73,11 +73,11 @@ QString RP1210IniData::GetVenderDllPath(int index)
 	return VenderDllPath; 
 }
 
-QString RP1210IniData::GetVenderName(int index)
-{
-	QModelIndex ModelIndex = VenderModel->index(index);
-	return VenderModel->data(ModelIndex, Qt::DisplayRole).toString();
-}
+//QString RP1210IniData::GetVenderName(int index)
+//{
+//	QModelIndex ModelIndex = VenderModel->index(index);
+//	return VenderModel->data(ModelIndex, Qt::DisplayRole).toString();
+//}
 
 int RP1210IniData::GetDeviceId(int index)
 {

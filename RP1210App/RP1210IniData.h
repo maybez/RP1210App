@@ -29,8 +29,8 @@ public:
 
 public:
 	QString GetVenderDllPath(int index);
-	QString GetVenderName(int index);
-	int GetDeviceId(int index);	
+	int GetDeviceId(int index);
+	//QString GetVenderName(int index);
 	QString GetProtocolName(int index);
 
 
