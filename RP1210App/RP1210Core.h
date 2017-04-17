@@ -25,6 +25,7 @@ public:
 	short ClientConnect(short DeviceId, QString Protocol,long SendBufferLen = 0,long ReceiveBufferLen = 0,bool IsAppPacketizingIncomingMsgs = false);
 	short ClientDisconnect();
 
+	QString GetErrorMsg(short ErrorID);
 private:	
 	// 4/16/2017 : ZH : 动态库导出函数指针定义
 	fxRP1210_ClientConnect           pRP1210_ClientConnect;
