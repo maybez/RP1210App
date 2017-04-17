@@ -1,5 +1,7 @@
 #include "RP1210Core.h"
 
+#include <QMessageBox>
+
 RP1210Core::RP1210Core(QObject *parent)
 	: QObject(parent)
 	, pRP1210_ClientConnect(0)
@@ -92,12 +94,46 @@ void RP1210Core::UnLoadRp1210DLL()
 
 short RP1210Core::ClientConnect(short DeviceId, QString Protocol, long SendBufferLen /*= 0*/, long ReceiveBufferLen /*= 0*/, bool IsAppPacketizingIncomingMsgs /*= false*/)
 {
+	short temp = 0;
+	if (IsAppPacketizingIncomingMsgs)
+		temp = 1;
 
+	ClientID = pRP1210_ClientConnect(NULL_WINDOW, DeviceId, (char*)(Protocol.toStdString().c_str()), SendBufferLen, ReceiveBufferLen, temp);
+	if (ClientID >= 0 && ClientID <= 127)    
+	{
+		return NO_ERRORS;
+	} 
+
+	QMessageBox::critical(0, tr("RP1210 API failed!"),
+		tr("Call RP1210_ClientConnect with DeviceID = %1,Protocol = %2 failed!\r\n\
+			%3").arg(DeviceId).arg(Protocol).arg(GetErrorMsg(ClientID)));
+
+	return ClientID;
 }
 
 short RP1210Core::ClientDisconnect()
 {
-
+	short ErrorCode = pRP1210_ClientDisconnect(ClientID);
+	if (ErrorCode != NO_ERRORS)
+	{
+		QMessageBox::critical(0, tr("RP1210 API failed!"),
+			tr("Call RP1210_ClientDisconnect with ClientID = %1 failed!\r\n\
+			%2").arg(ClientID).arg(GetErrorMsg(ErrorCode)));
+	} 
+	return ErrorCode;
 }
+
+QString RP1210Core::GetErrorMsg(short ErrorID)
+{
+	char  szTemp[100] = { 0 };
+	memset(szTemp, 0x00, sizeof(szTemp));
+	if (ErrorID < 0)
+		ErrorID = (-1 * ErrorID);
+
+	pRP1210_GetErrorMsg(ErrorID, szTemp);
+
+	return QString("ErrorID == %1;Msg == %2.").arg(ErrorID).arg(szTemp);
+}
+
 
 RP1210Core* RP1210Core::theRp1210Instance = 0;
