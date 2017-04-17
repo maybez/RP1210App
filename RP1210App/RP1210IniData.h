@@ -30,8 +30,8 @@ public:
 public:
 	QString GetVenderDllPath(int index);
 	int GetDeviceId(int index);
-	//QString GetVenderName(int index);
 	QString GetProtocolName(int index);
+	QString GetBaudRate(int index);
 
 
 public slots:

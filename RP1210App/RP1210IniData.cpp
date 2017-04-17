@@ -90,6 +90,12 @@ QString RP1210IniData::GetProtocolName(int index)
 	return ProtocolModel->data(ModelIndex, Qt::DisplayRole).toString();
 }
 
+QString RP1210IniData::GetBaudRate(int index)
+{
+	QModelIndex ModelIndex = BaudRateModel->index(index);
+	return BaudRateModel->data(ModelIndex, Qt::DisplayRole).toString();
+}
+
 void RP1210IniData::OnVenderChanged(QString VenderName)
 {
 	VenderIniPath = "C:\\Windows\\" + VenderName + ".ini";

@@ -105,8 +105,7 @@ short RP1210Core::ClientConnect(short DeviceId, QString Protocol, long SendBuffe
 	} 
 
 	QMessageBox::critical(0, tr("RP1210 API failed!"),
-		tr("Call RP1210_ClientConnect with DeviceID = %1,Protocol = %2 failed!\r\n\
-			%3").arg(DeviceId).arg(Protocol).arg(GetErrorMsg(ClientID)));
+		tr("Call RP1210_ClientConnect with DeviceID = %1,%2 failed!\r\n%3").arg(DeviceId).arg(Protocol).arg(GetErrorMsg(ClientID)));
 
 	return ClientID;
 }

@@ -62,9 +62,25 @@ void RP1210Window::OnConnect()
 	DWORD dwError = rp1210Core->LoadRp1210DLL(dllPath);
 
 	if (!dwError)      // 4/16/2017 : ZH :  dwError == 0 --> Load Success
-	{
-		//nClientID = pRP1210_ClientConnect(NULL_WINDOW, (short)iDeviceID, szProtocolName, 0, 0, 0);
+	{ 
+		int DeviceID = IniData->GetDeviceId(ui.comboBoxDevice->currentIndex());
+		QString Protocol = "";
 
+		QString ProtocolName = IniData->GetProtocolName(ui.comboBoxProtocol->currentIndex());
+		if (!(ui.checkBoxAutoBaudRate->isChecked()))
+		{
+			QString BaudRate = IniData->GetBaudRate(ui.comboBoxBaudRate->currentIndex());
+			Protocol = QString("%1:Baud=%2").arg(ProtocolName).arg(BaudRate);
+		}
+		else
+		{
+			Protocol = QString("%1:Baud=Auto").arg(ProtocolName);
+		}
+
+		short ErrorCode = rp1210Core->ClientConnect(DeviceID, Protocol);
+		if (ErrorCode != NO_ERRORS)
+			return;
+		
 		ui.pushButtonConnect->setEnabled(false);
 		ui.pushButtonDisConnect->setEnabled(true);
 
@@ -77,5 +93,10 @@ void RP1210Window::OnConnect()
 
 void RP1210Window::OnDisConnect()
 {
-
+	short ErrorCode = rp1210Core->ClientDisconnect();
+	if (ErrorCode == NO_ERRORS)
+	{ 
+		ui.pushButtonConnect->setEnabled(true);
+		ui.pushButtonDisConnect->setEnabled(false);
+	}
 }
