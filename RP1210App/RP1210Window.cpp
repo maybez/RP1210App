@@ -64,24 +64,18 @@ void RP1210Window::OnConnect()
 
 	if (!dwError)      // 4/16/2017 : ZH :  dwError == 0 --> Load Success
 	{ 
+		// 4/18/2017 : ZH : 设备ID和协议字符串
 		int DeviceID = IniData->GetDeviceId(ui.comboBoxDevice->currentIndex());
-		QString Protocol = "";
-
-		QString ProtocolName = IniData->GetProtocolName(ui.comboBoxProtocol->currentIndex());
-		if (!(ui.checkBoxAutoBaudRate->isChecked()))
-		{
-			QString BaudRate = IniData->GetBaudRate(ui.comboBoxBaudRate->currentIndex());
-			Protocol = QString("%1:Baud=%2").arg(ProtocolName).arg(BaudRate);
-		}
-		else
-		{
-			Protocol = QString("%1:Baud=Auto").arg(ProtocolName);
-		}
-
+		QString Protocol = GetProtocolString();		
 		short ErrorCode = rp1210Core->ClientConnect(DeviceID, Protocol);
-		if (ErrorCode != NO_ERRORS)
-			return;
+		if (ErrorCode != NO_ERRORS)			return;
+
+		// 4/18/2017 : ZH : 如果是J1939协议
 		
+
+
+
+
 		ui.pushButtonConnect->setEnabled(false);
 		ui.pushButtonDisConnect->setEnabled(true);
 
@@ -110,4 +104,18 @@ void RP1210Window::OnClearLog()
 void RP1210Window::OnLogMsg(QString Msg)
 {
 	ui.textBrowserLogMsg->append(Msg);
+}
+
+QString RP1210Window::GetProtocolString()
+{
+	QString ProtocolName = IniData->GetProtocolName(ui.comboBoxProtocol->currentIndex());
+	if (!(ui.checkBoxAutoBaudRate->isChecked()))
+	{
+		QString BaudRate = IniData->GetBaudRate(ui.comboBoxBaudRate->currentIndex());
+		return QString("%1:Baud=%2").arg(ProtocolName).arg(BaudRate);
+	}
+	else
+	{
+		return QString("%1:Baud=Auto").arg(ProtocolName);
+	}
 }

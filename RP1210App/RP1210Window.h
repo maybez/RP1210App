@@ -30,4 +30,9 @@ protected slots:
 
 public slots:
 	void OnLogMsg(QString Msg);
+
+
+private:
+	// 4/18/2017 : ZH : 私有，辅助函数，根据客户选择拼接协议字符串，用来和硬件建立链接
+	QString GetProtocolString();
 };

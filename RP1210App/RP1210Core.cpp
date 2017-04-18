@@ -122,9 +122,25 @@ short RP1210Core::ClientDisconnect()
 		QString ErrorString = QString(tr("Call RP1210_ClientDisconnect with ClientID = %1 failed!\r\n%2.").arg(ClientID).arg(GetErrorMsg(ErrorCode)));
 		emit LogMsg(ErrorString);
 		QMessageBox::critical(0, tr("RP1210 API failed!"),ErrorString);
+		return ErrorCode;
 	} 
 
 	emit LogMsg("RP1210_ClientDisconnect...");
+	return ErrorCode;
+}
+
+short RP1210Core::SendCommand(short CommandNumber, char* ClientCommand, short MsgSize)
+{
+	short ErrorCode = pRP1210_SendCommand(CommandNumber, ClientID, ClientCommand, MsgSize);
+	if (ErrorCode != NO_ERRORS)
+	{
+		QString ErrorString = QString(tr("Call RP1210_SendCommand with CommandNumber = %1 ，MsgSize = %2 failed!\r\n%3.").arg(CommandNumber).arg(MsgSize).arg(GetErrorMsg(ErrorCode)));
+		emit LogMsg(ErrorString);
+		QMessageBox::critical(0, tr("RP1210 API failed!"), ErrorString);
+		return ErrorCode;
+	}
+
+	emit LogMsg(tr("RP1210_SendCommand with CommandNumber %1,MsgSize %2").arg(CommandNumber).arg(MsgSize));
 	return ErrorCode;
 }
 
@@ -140,5 +156,39 @@ QString RP1210Core::GetErrorMsg(short ErrorID)
 	return QString("ErrorID = %1;Msg = %2").arg(ErrorID).arg(szTemp);
 }
 
+
+short RP1210Core::ClaimJ1939Address(unsigned char ToolAddress)
+{
+	// 4/19/2017 : ZH : 别特么问为啥这样，我特么也是从示例代码中抄来的，没时间研究J1939/81文档了~~~
+	// J1939 "NAME" for this sample source code application ( see J1939/81 )
+	//    Self Configurable       =   0 = NO
+	//    Industry Group          =   0 = GLOBAL
+	//    Vehicle System          =   0 = Non-Specific
+	//    Vehicle System Instance =   0 = First Diagnostic PC
+	//    Reserved                =   0 = Must be zero
+	//    Function                = 129 = Offboard Service Tool
+	//    Function Instance       =   0 = First Offboard Service Tool
+	//    Manufacturer Code       =  11 = Dearborn Group, Inc. 
+	//    Manufacturer Identity   =   0 = Dearborn Group, Inc. Sample Source Code
+	const unsigned char ucJ1939Name[8] = { 0x00, 0x00, 0x60, 0x01, 0x00, 0x81, 0x00, 0x00 };
+
+	unsigned char TxBuffer[32] = {0};
+	memset(TxBuffer, 0x00, sizeof(TxBuffer));
+
+	TxBuffer[0] = ToolAddress;           // 设备地址
+	TxBuffer[1] = ucJ1939Name[0];        // 名称？
+	TxBuffer[2] = ucJ1939Name[1];
+	TxBuffer[3] = ucJ1939Name[2];
+	TxBuffer[4] = ucJ1939Name[3];
+	TxBuffer[5] = ucJ1939Name[4];
+	TxBuffer[6] = ucJ1939Name[5];
+	TxBuffer[7] = ucJ1939Name[6];
+	TxBuffer[8] = ucJ1939Name[7];
+	TxBuffer[9] = BLOCK_UNTIL_DONE;      // 调用标记
+
+	// 4/19/2017 : ZH : 发送数据
+	short ErrorCode = SendCommand(RP1210_Protect_J1939_Address, (char*)TxBuffer, 10);
+	return ErrorCode;
+}
 
 RP1210Core* RP1210Core::theRp1210Instance = 0;

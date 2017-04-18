@@ -22,10 +22,16 @@ public:
 
 
 public:
+	// 4/19/2017 : ZH : RP1210 API 指针的再次简单封装调用，我不想直接使用裸函数指针来做操作.
 	short ClientConnect(short DeviceId, QString Protocol,long SendBufferLen = 0,long ReceiveBufferLen = 0,bool IsAppPacketizingIncomingMsgs = false);
 	short ClientDisconnect();
+	short SendCommand(short CommandNumber,char* ClentCommand,short MsgSize);
 
 	QString GetErrorMsg(short ErrorID);
+
+public:
+	// 4/19/2017 : ZH : 简单封装后的RP1210_SendCommand函数的具体命令函数
+	short ClaimJ1939Address(unsigned char ToolAddress);
 
 signals:
 	void LogMsg(QString Msg);
