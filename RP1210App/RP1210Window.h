@@ -26,4 +26,8 @@ protected slots:
 	void OnAutoBaudRate(bool bAuto);
 	void OnConnect();
 	void OnDisConnect();
+	void OnClearLog();
+
+public slots:
+	void OnLogMsg(QString Msg);
 };

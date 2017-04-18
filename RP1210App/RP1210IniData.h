@@ -39,6 +39,9 @@ public slots:
 	void OnDeviceChanged(int index);
 	void OnProtocolChanged(int index);
 
+signals:
+	void LogMsg(QString Msg);
+
 private:
 	RP1210IniData(QObject *parent);
 

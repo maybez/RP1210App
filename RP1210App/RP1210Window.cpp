@@ -11,25 +11,26 @@ RP1210Window::RP1210Window(QWidget *parent)
 
 	IniData = RP1210IniData::GetInistance();
 	IniData->ReadMainIniFile();
-
 	rp1210Core = RP1210Core::GetInstance();
 
-	ui.pushButtonConnect->setEnabled(true);
-	ui.pushButtonDisConnect->setEnabled(false);
-
+	connect(IniData, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
+	connect(rp1210Core, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
 	connect(ui.checkBoxAutoBaudRate, SIGNAL(toggled(bool)), this,SLOT(OnAutoBaudRate(bool)));
 	connect(ui.pushButtonConnect, SIGNAL(clicked()), this, SLOT(OnConnect()));
 	connect(ui.pushButtonDisConnect, SIGNAL(clicked()), this, SLOT(OnDisConnect()));
+	connect(ui.pushButtonClearLog, SIGNAL(clicked()), this, SLOT(OnClearLog()));
 	connect(ui.comboBoxVendor, SIGNAL(currentIndexChanged(QString)), IniData, SLOT(OnVenderChanged(QString)));
 	connect(ui.comboBoxDevice, SIGNAL(currentIndexChanged(int)), IniData, SLOT(OnDeviceChanged(int)));
 	connect(ui.comboBoxProtocol, SIGNAL(currentIndexChanged(int)), IniData, SLOT(OnProtocolChanged(int)));
 	
-	//connect(ui.comboBoxDevice, SIGNAL(currentIndexChanged(int)),IniData)
-
 	ui.comboBoxVendor->setModel(IniData->GetVenderModel());
 	ui.comboBoxDevice->setModel(IniData->GetDeviceModel());
 	ui.comboBoxProtocol->setModel(IniData->GetProtocolModel());
 	ui.comboBoxBaudRate->setModel(IniData->GetBaudRateModel());
+
+	ui.pushButtonConnect->setEnabled(true);
+	ui.pushButtonDisConnect->setEnabled(false);
+
 }
 
 RP1210Window::~RP1210Window()
@@ -99,4 +100,14 @@ void RP1210Window::OnDisConnect()
 		ui.pushButtonConnect->setEnabled(true);
 		ui.pushButtonDisConnect->setEnabled(false);
 	}
+}
+
+void RP1210Window::OnClearLog()
+{
+	ui.textBrowserLogMsg->clear();
+}
+
+void RP1210Window::OnLogMsg(QString Msg)
+{
+	ui.textBrowserLogMsg->append(Msg);
 }

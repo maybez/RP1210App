@@ -57,10 +57,13 @@ void RP1210ProtocolModel::IniProtocolList(class QSettings* VenderIni, QList<Rp12
 	} 
 }
 
-void RP1210ProtocolModel::SetProtocolList(QList<int> list)
+void RP1210ProtocolModel::SetProtocolList(QList<int>* list)
 {
 	beginResetModel();
-	IndexList = list;
+	if (list)
+		IndexList = *list;
+	else
+		IndexList.clear();
 	endResetModel();
 }
 

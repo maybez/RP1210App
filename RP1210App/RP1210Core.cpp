@@ -43,9 +43,10 @@ DWORD RP1210Core::LoadRp1210DLL(QString DLLPath)
 
 	if(hRP1210DLL == NULL)
 	{
+		emit LogMsg(tr("Failed to load %1,dwError = %2.").arg(DLLPath).arg(dwError));
 		return dwError;
 	}
-
+	
 	// 4/16/2017 : ZH : µ¼³öº¯Êý
 	pRP1210_ClientConnect       = (fxRP1210_ClientConnect)GetProcAddress(hRP1210DLL, "RP1210_ClientConnect");
 	pRP1210_ClientDisconnect    = (fxRP1210_ClientDisconnect)GetProcAddress(hRP1210DLL, "RP1210_ClientDisconnect");
@@ -58,18 +59,19 @@ DWORD RP1210Core::LoadRp1210DLL(QString DLLPath)
 	pRP1210_GetErrorMsg         = (fxRP1210_GetErrorMsg)GetProcAddress(hRP1210DLL, "RP1210_GetErrorMsg");
 	pRP1210_GetLastErrorMsg     = (fxRP1210_GetLastErrorMsg)GetProcAddress(hRP1210DLL, "RP1210_GetLastErrorMsg");
 	
-	if (NULL == pRP1210_ClientConnect)       { fprintf(stderr, "\nError:    Could not find procedure RP1210_ClientConnect       in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_ClientDisconnect)    { fprintf(stderr, "\nError:    Could not find procedure RP1210_ClientDisconnect    in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_ReadMessage)         { fprintf(stderr, "\nError:    Could not find procedure RP1210_ReadMessage         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_SendMessage)         { fprintf(stderr, "\nError:    Could not find procedure RP1210_SendMessage         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_SendCommand)         { fprintf(stderr, "\nError:    Could not find procedure RP1210_SendCommand         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_ReadVersion)         { fprintf(stderr, "\nError:    Could not find procedure RP1210_ReadVersion         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_GetHardwareStatus)   { fprintf(stderr, "\nError:    Could not find procedure RP1210_GetHardwareStatus   in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_GetErrorMsg)         { fprintf(stderr, "\nError:    Could not find procedure RP1210_GetErrorMsg         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_ReadDetailedVersion) { fprintf(stderr, "\nWarning:  Could not find procedure RP1210_ReadDetailedVersion in DLL.\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
-	if (NULL == pRP1210_GetLastErrorMsg)     { fprintf(stderr, "\nWarning:  Could not find procedure RP1210_GetLastErrorMsg     in DLL.\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_ClientConnect)       { emit LogMsg( "\nError:    Could not find procedure RP1210_ClientConnect       in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_ClientDisconnect)    { emit LogMsg( "\nError:    Could not find procedure RP1210_ClientDisconnect    in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_ReadMessage)         { emit LogMsg( "\nError:    Could not find procedure RP1210_ReadMessage         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_SendMessage)         { emit LogMsg( "\nError:    Could not find procedure RP1210_SendMessage         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_SendCommand)         { emit LogMsg( "\nError:    Could not find procedure RP1210_SendCommand         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_ReadVersion)         { emit LogMsg( "\nError:    Could not find procedure RP1210_ReadVersion         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_GetHardwareStatus)   { emit LogMsg( "\nError:    Could not find procedure RP1210_GetHardwareStatus   in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_GetErrorMsg)         { emit LogMsg( "\nError:    Could not find procedure RP1210_GetErrorMsg         in DLL!\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_ReadDetailedVersion) { emit LogMsg( "\nWarning:  Could not find procedure RP1210_ReadDetailedVersion in DLL.\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
+	if (NULL == pRP1210_GetLastErrorMsg)     { emit LogMsg( "\nWarning:  Could not find procedure RP1210_GetLastErrorMsg     in DLL.\n"); FreeLibrary(hRP1210DLL);hRP1210DLL = 0 ; return dwError; }
 
-	return 0;	  
+	emit LogMsg(tr("load %1 success!").arg(DLLPath));
+	return 0;
 } 
 
 void RP1210Core::UnLoadRp1210DLL()
@@ -101,11 +103,13 @@ short RP1210Core::ClientConnect(short DeviceId, QString Protocol, long SendBuffe
 	ClientID = pRP1210_ClientConnect(NULL_WINDOW, DeviceId, (char*)(Protocol.toStdString().c_str()), SendBufferLen, ReceiveBufferLen, temp);
 	if (ClientID >= 0 && ClientID <= 127)    
 	{
+		emit LogMsg(tr("RP1210_ClientConnect with DeviceID = %1,%2 success! ClientID = %3.").arg(DeviceId).arg(Protocol).arg(ClientID));
 		return NO_ERRORS;
 	} 
 
-	QMessageBox::critical(0, tr("RP1210 API failed!"),
-		tr("Call RP1210_ClientConnect with DeviceID = %1,%2 failed!\r\n%3").arg(DeviceId).arg(Protocol).arg(GetErrorMsg(ClientID)));
+	QString ErrorString = QString(tr("Call RP1210_ClientConnect with DeviceID = %1,%2 failded!\r\n%3.").arg(DeviceId).arg(Protocol).arg(GetErrorMsg(ClientID)));
+	emit LogMsg(ErrorString);
+	QMessageBox::critical(0, tr("RP1210 API failed!"), ErrorString);
 
 	return ClientID;
 }
@@ -115,10 +119,12 @@ short RP1210Core::ClientDisconnect()
 	short ErrorCode = pRP1210_ClientDisconnect(ClientID);
 	if (ErrorCode != NO_ERRORS)
 	{
-		QMessageBox::critical(0, tr("RP1210 API failed!"),
-			tr("Call RP1210_ClientDisconnect with ClientID = %1 failed!\r\n\
-			%2").arg(ClientID).arg(GetErrorMsg(ErrorCode)));
+		QString ErrorString = QString(tr("Call RP1210_ClientDisconnect with ClientID = %1 failed!\r\n%2.").arg(ClientID).arg(GetErrorMsg(ErrorCode)));
+		emit LogMsg(ErrorString);
+		QMessageBox::critical(0, tr("RP1210 API failed!"),ErrorString);
 	} 
+
+	emit LogMsg("RP1210_ClientDisconnect...");
 	return ErrorCode;
 }
 
@@ -131,7 +137,7 @@ QString RP1210Core::GetErrorMsg(short ErrorID)
 
 	pRP1210_GetErrorMsg(ErrorID, szTemp);
 
-	return QString("ErrorID == %1;Msg == %2.").arg(ErrorID).arg(szTemp);
+	return QString("ErrorID = %1;Msg = %2").arg(ErrorID).arg(szTemp);
 }
 
 

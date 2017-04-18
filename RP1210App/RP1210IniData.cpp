@@ -113,7 +113,7 @@ void RP1210IniData::OnVenderChanged(QString VenderName)
 
 void RP1210IniData::OnDeviceChanged(int index)
 {
-	QList<int>& protocolList = DeviceModel->GetProtocolList(index);
+	QList<int>* protocolList = DeviceModel->GetProtocolList(index);
 	ProtocolModel->SetProtocolList(protocolList);
 }
 

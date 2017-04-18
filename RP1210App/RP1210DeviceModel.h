@@ -26,7 +26,7 @@ public:
 	~RP1210DeviceModel();
 
 	QList<Rp1210Device>& GetDeviceList();
-	QList<int>& GetProtocolList(int index);
+	QList<int>* GetProtocolList(int index);
 
 	void InitDeviceList(class QSettings* VenderIni);
 

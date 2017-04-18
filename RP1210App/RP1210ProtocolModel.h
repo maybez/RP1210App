@@ -26,7 +26,7 @@ public:
 
 	Rp1210Protocol* GetProtocol(int index);
 	void IniProtocolList(class QSettings* VenderIni, QList<Rp1210Device>& DeviceList);
-	void SetProtocolList(QList<int> list);
+	void SetProtocolList(QList<int>* list);
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const;
 	QVariant data(const QModelIndex &index, int role) const;

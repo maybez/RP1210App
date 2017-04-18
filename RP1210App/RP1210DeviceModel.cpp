@@ -17,14 +17,14 @@ QList<Rp1210Device>& RP1210DeviceModel::GetDeviceList()
 	return DeviceList;
 }
 
-QList<int>& RP1210DeviceModel::GetProtocolList(int index)
+QList<int>* RP1210DeviceModel::GetProtocolList(int index)
 {
 	if (0 <= index && index < DeviceList.size())
 	{
-		return DeviceList[index].Protocols;
+		return &(DeviceList[index].Protocols);
 	}
 
-	return QList<int>();
+	return 0;
 }
 
 void RP1210DeviceModel::InitDeviceList(QSettings* VenderIni)

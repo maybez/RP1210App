@@ -26,6 +26,10 @@ public:
 	short ClientDisconnect();
 
 	QString GetErrorMsg(short ErrorID);
+
+signals:
+	void LogMsg(QString Msg);
+
 private:	
 	// 4/16/2017 : ZH : 动态库导出函数指针定义
 	fxRP1210_ClientConnect           pRP1210_ClientConnect;
