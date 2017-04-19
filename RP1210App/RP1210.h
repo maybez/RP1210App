@@ -108,6 +108,11 @@ typedef unsigned char U8;
 #define SILENT_J1939_CLAIM                          0x00  // Claim J1939 Address
 #define PASS_J1939_CLAIM_MESSAGES                   0x01  // Claim J1939 Address
 
+#define J1939_GLOBAL_ADDRESS                        255
+#define J1939_OFFBOARD_DIAGNOSTICS_TOOL_1           249
+#define J1939_OFFBOARD_DIAGNOSTICS_TOOL_2           250
+#define J1587_OFFBOARD_DIAGNOSTICS_TOOL_1           172
+
 //4/14/2017 ZH :波特率相关
 #define CHANGE_BAUD_NOW                             0x00  // Change Baud
 #define MSG_FIRST_CHANGE_BAUD                       0x01  // Change Baud
@@ -216,6 +221,8 @@ typedef unsigned char U8;
 #define BYTE1_OF_INT4( x )    HIBYTE_OF_WORD( LOWORD_OF_INT4( x ) )
 #define BYTE2_OF_INT4( x )    LOBYTE_OF_WORD( HIWORD_OF_INT4( x ) )
 #define BYTE3_OF_INT4( x )    HIBYTE_OF_WORD( HIWORD_OF_INT4( x ) )
+
+
 
 //-----------------------------------------------------------------------------------------------------
 // RP1210 Defined Function Prototypes  导出函数声明

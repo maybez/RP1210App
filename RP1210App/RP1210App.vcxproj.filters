@@ -91,6 +91,15 @@
     <ClCompile Include="GeneratedFiles\Release\moc_RP1210Core.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_J1939FilterWindow.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_J1939FilterWindow.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="J1939FilterWindow.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="RP1210Window.h">
@@ -114,6 +123,12 @@
     <CustomBuild Include="RP1210ProtocolModel.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
+    <CustomBuild Include="J1939FilterWindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="J1939FilterWindow.ui">
+      <Filter>Form Files</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="GeneratedFiles\ui_RP1210Window.h">
@@ -121,6 +136,9 @@
     </ClInclude>
     <ClInclude Include="RP1210.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GeneratedFiles\ui_J1939FilterWindow.h">
+      <Filter>Generated Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

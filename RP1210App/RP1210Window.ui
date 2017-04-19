@@ -159,6 +159,19 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="pushButtonFilter">
+          <property name="maximumSize">
+           <size>
+            <width>80</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Filter</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <widget class="QPushButton" name="pushButtonClearLog">
           <property name="text">
            <string>ClearLog</string>

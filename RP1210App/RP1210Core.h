@@ -32,6 +32,11 @@ public:
 public:
 	// 4/19/2017 : ZH : 简单封装后的RP1210_SendCommand函数的具体命令函数
 	short ClaimJ1939Address(unsigned char ToolAddress);
+	short SetMessageFilterForJ1939(unsigned char flag,unsigned char* PGN,unsigned char Priority,unsigned char SA,unsigned char TA);
+	short SetJ1919FilterType(unsigned char FilterType);
+	short SetAllFilterStatesToPass();
+	short SetAllFilterStatesToDiscard();
+	//Set_Message_Filtering_For_J1939
 
 signals:
 	void LogMsg(QString Msg);

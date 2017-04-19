@@ -1,11 +1,13 @@
 #include "RP1210Window.h"
 #include "RP1210IniData.h"
 #include "RP1210Core.h"
+#include "J1939FilterWindow.h"
 
 #include <QMessageBox>
 
 RP1210Window::RP1210Window(QWidget *parent)
 	: QDialog(parent)
+	,J1939FilterDialog(0)
 {
 	ui.setupUi(this);
 
@@ -16,9 +18,12 @@ RP1210Window::RP1210Window(QWidget *parent)
 	connect(IniData, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
 	connect(rp1210Core, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
 	connect(ui.checkBoxAutoBaudRate, SIGNAL(toggled(bool)), this,SLOT(OnAutoBaudRate(bool)));
+
 	connect(ui.pushButtonConnect, SIGNAL(clicked()), this, SLOT(OnConnect()));
 	connect(ui.pushButtonDisConnect, SIGNAL(clicked()), this, SLOT(OnDisConnect()));
+	connect(ui.pushButtonFilter, SIGNAL(clicked()), this, SLOT(OnFilterWindow()));
 	connect(ui.pushButtonClearLog, SIGNAL(clicked()), this, SLOT(OnClearLog()));
+
 	connect(ui.comboBoxVendor, SIGNAL(currentIndexChanged(QString)), IniData, SLOT(OnVenderChanged(QString)));
 	connect(ui.comboBoxDevice, SIGNAL(currentIndexChanged(int)), IniData, SLOT(OnDeviceChanged(int)));
 	connect(ui.comboBoxProtocol, SIGNAL(currentIndexChanged(int)), IniData, SLOT(OnProtocolChanged(int)));
@@ -70,15 +75,11 @@ void RP1210Window::OnConnect()
 		short ErrorCode = rp1210Core->ClientConnect(DeviceID, Protocol);
 		if (ErrorCode != NO_ERRORS)			return;
 
-		// 4/18/2017 : ZH : 如果是J1939协议
-		
-
-
-
+		// 4/18/2017 : ZH : 如果是J1939协议 
+		rp1210Core->ClaimJ1939Address(J1939_OFFBOARD_DIAGNOSTICS_TOOL_1);
 
 		ui.pushButtonConnect->setEnabled(false);
 		ui.pushButtonDisConnect->setEnabled(true);
-
 	}
 	else
 	{
@@ -101,6 +102,18 @@ void RP1210Window::OnClearLog()
 	ui.textBrowserLogMsg->clear();
 }
 
+void RP1210Window::OnFilterWindow()
+{
+	if (!J1939FilterDialog)
+	{
+		SetUpFilterWindow();
+	}
+
+	J1939FilterDialog->show();
+	J1939FilterDialog->raise();
+	J1939FilterDialog->activateWindow();
+}
+
 void RP1210Window::OnLogMsg(QString Msg)
 {
 	ui.textBrowserLogMsg->append(Msg);
@@ -119,3 +132,10 @@ QString RP1210Window::GetProtocolString()
 		return QString("%1:Baud=Auto").arg(ProtocolName);
 	}
 }
+
+void RP1210Window::SetUpFilterWindow()
+{
+	J1939FilterDialog = new J1939FilterWindow(this);
+	J1939FilterDialog->SetRp1210Core(rp1210Core);
+}
+

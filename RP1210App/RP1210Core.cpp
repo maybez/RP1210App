@@ -156,7 +156,7 @@ QString RP1210Core::GetErrorMsg(short ErrorID)
 	return QString("ErrorID = %1;Msg = %2").arg(ErrorID).arg(szTemp);
 }
 
-
+// 4/19/2017 : ZH : claim address for j1939 protocol
 short RP1210Core::ClaimJ1939Address(unsigned char ToolAddress)
 {
 	// 4/19/2017 : ZH : 别特么问为啥这样，我特么也是从示例代码中抄来的，没时间研究J1939/81文档了~~~
@@ -188,6 +188,41 @@ short RP1210Core::ClaimJ1939Address(unsigned char ToolAddress)
 
 	// 4/19/2017 : ZH : 发送数据
 	short ErrorCode = SendCommand(RP1210_Protect_J1939_Address, (char*)TxBuffer, 10);
+	return ErrorCode;
+}
+
+// 4/19/2017 : ZH : Set filters for j1939 protocol
+short RP1210Core::SetMessageFilterForJ1939(unsigned char flag, unsigned char* PGN, unsigned char Priority, unsigned char SA, unsigned char TA)
+{
+	unsigned char TX[32] = { 0 };
+	memset(TX, 0x00, sizeof(TX));
+	TX[0] = flag;
+	TX[1] = PGN[0];
+	TX[2] = PGN[1];
+	TX[3] = PGN[2];
+	TX[4] = Priority;
+	TX[5] = SA;
+	TX[6] = TA;
+
+	short ErrorCode = SendCommand(RP1210_Set_Message_Filtering_For_J1939, (char*)TX, 7);
+	return ErrorCode;
+}
+
+short RP1210Core::SetJ1919FilterType(unsigned char FilterType)
+{
+	short ErrorCode = SendCommand(RP1210_Set_J1939_Filter_Type, (char*)(&FilterType), 1);
+	return ErrorCode;
+}
+
+short RP1210Core::SetAllFilterStatesToPass()
+{
+	short ErrorCode = SendCommand(RP1210_Set_All_Filters_States_to_Pass, 0, 0);
+	return ErrorCode;
+}
+
+short RP1210Core::SetAllFilterStatesToDiscard()
+{
+	short ErrorCode = SendCommand(RP1210_Set_All_Filters_States_to_Discard, 0, 0);
 	return ErrorCode;
 }
 
