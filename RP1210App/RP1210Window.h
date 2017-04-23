@@ -34,6 +34,7 @@ protected slots:
 	void OnDisConnect();
 	void OnClearLog();
 	void OnFilterWindow();
+	void OnScrollRangeChanged(int min, int max);
 
 public slots:
 	void OnLogMsg(QString Msg);

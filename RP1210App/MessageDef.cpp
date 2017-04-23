@@ -9,7 +9,12 @@ MessageBase::MessageBase(QByteArray rawMsg, bool useEcho /*= false*/)
 	// 4/23/2017 : ZH : 至少要4个字节
 	if (RawMsg.size() >= 4)
 	{
-		TimeStamp = (RawMsg[0] << 24) | (RawMsg[1] << 16) | (RawMsg[2] << 8) | (RawMsg[3]);      // 时间戳，大端存储
+		unsigned char c0, c1, c2, c3;
+		c0 = RawMsg.at(0);
+		c1 = RawMsg.at(1);
+		c2 = RawMsg.at(2);
+		c3 = RawMsg.at(3);
+		TimeStamp = (c0 << 24) | (c1 << 16) | (c2 << 8) | (c3);      // 时间戳，大端存储
 	}
 
 	if (UseEcho)
@@ -36,17 +41,18 @@ MessageBase::~MessageBase()
 
 QString MessageBase::ByteArrayToQString(QByteArray arr) const
 {
-	int len = arr.size() * 3 + 1;
+	int len = arr.size() * 4;
 	char* temp = new char[len];
 	memset(temp, 0x00, len);
 
-	for (int i = 0, index = 0; i < arr.size(); ++i, index += 3)
+	int index = 0;
+	for (int i = 0 ; i < arr.size(); ++i)
 	{
-		sprintf_s(&(temp[index]), 3, "%02X", arr.at(i));
+		index += sprintf_s(&(temp[index]), 4, "%02X ", (unsigned char)arr.at(i));
 	}
 
 	QString str(temp);
-	delete[] temp;
+	delete [] temp;
 	return str;
 }
 
@@ -84,7 +90,12 @@ J1939Message::J1939Message(QByteArray rawMsg, bool useEcho /*= false*/)
 {
 	if (Data.size() >= 6)
 	{
-		PGN = (Data[2] << 16) | (Data[1] << 8) | (Data[0]);   //PNG小端存储
+		unsigned char c2, c1, c0;
+		c2 = Data.at(2);
+		c1 = Data.at(1);
+		c0 = Data.at(0);
+		PGN = (c2 << 16) | (c1 << 8) | (c0);   //PNG小端存储
+
 		Priority = Data[3];
 		SA = Data[4];
 		TA = Data[5];

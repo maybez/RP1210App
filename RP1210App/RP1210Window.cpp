@@ -6,6 +6,7 @@
 #include "RP1210MsgParser.h"
 
 #include <QMessageBox>
+#include <QScrollBar>
 
 RP1210Window::RP1210Window(QWidget *parent)
 	: QDialog(parent)
@@ -21,6 +22,7 @@ RP1210Window::RP1210Window(QWidget *parent)
 
 	ui.tableViewMsg->setModel(msgParser);
 	connect(rp1210ReadThread, &RP1210ReadThread::MsgReady, msgParser, &RP1210MsgParser::OnMessage,Qt::QueuedConnection);
+	connect(ui.tableViewMsg->verticalScrollBar(), &QScrollBar::rangeChanged, this,&RP1210Window::OnScrollRangeChanged);
 
 	connect(IniData, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
 	connect(rp1210Core, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)),Qt::QueuedConnection);
@@ -116,6 +118,11 @@ void RP1210Window::OnDisConnect()
 void RP1210Window::OnClearLog()
 {
 	ui.textBrowserLogMsg->clear();
+	
+	// 4/23/2017 : ZH : ²âÊÔ´úÂë
+	char tmp3[] = { 0x04,0xF6,0xFE,0x50,0xF1,0xFE,0x00,0x06,0x00,0xFF,0xFC,0x00,0x00,0xFC,0xFF,0x00,0x00,0xFF }; 
+	QByteArray arr3(tmp3, sizeof(tmp3));
+	msgParser->OnMessage(arr3);
 }
 
 void RP1210Window::OnFilterWindow()
@@ -128,6 +135,11 @@ void RP1210Window::OnFilterWindow()
 	J1939FilterDialog->show();
 	J1939FilterDialog->raise();
 	J1939FilterDialog->activateWindow();
+}
+
+void RP1210Window::OnScrollRangeChanged(int min, int max)
+{
+	ui.tableViewMsg->verticalScrollBar()->setValue(max);
 }
 
 void RP1210Window::OnLogMsg(QString Msg)
