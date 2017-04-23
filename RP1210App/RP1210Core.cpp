@@ -144,6 +144,20 @@ short RP1210Core::SendCommand(short CommandNumber, char* ClientCommand, short Ms
 	return ErrorCode;
 }
 
+short RP1210Core::ReadMessge(char* RxBuffer, short BufferSize, short BlockOnSend)
+{
+	short retVal = pRP1210_ReadMessage(ClientID, RxBuffer, BufferSize, BlockOnSend);
+	
+	// 4/22/2017 : ZH : 读取成功或者暂时没有消息
+	if (retVal >= 0)
+		return retVal;
+
+	QString ErrorString = QString(tr("Call RP1210_ReadMessage with ClientID = %1 failed!\r\n%2.").arg(ClientID).arg(GetErrorMsg(retVal*-1)));
+	emit LogMsg(ErrorString);
+
+	return retVal;
+}
+
 QString RP1210Core::GetErrorMsg(short ErrorID)
 {
 	char  szTemp[100] = { 0 };

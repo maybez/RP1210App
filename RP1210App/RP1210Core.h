@@ -26,6 +26,10 @@ public:
 	short ClientConnect(short DeviceId, QString Protocol,long SendBufferLen = 0,long ReceiveBufferLen = 0,bool IsAppPacketizingIncomingMsgs = false);
 	short ClientDisconnect();
 	short SendCommand(short CommandNumber,char* ClentCommand,short MsgSize);
+	short ReadMessge(char* RxBuffer, short BufferSize, short BlockOnSend);
+
+
+
 
 	QString GetErrorMsg(short ErrorID);
 

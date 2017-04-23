@@ -22,6 +22,11 @@ private:
 	// 4/16/2017 : ZH : rp1210动态库
 	class RP1210Core* rp1210Core;
 
+	// 4/23/2017 : ZH : 消息读取线程
+	class RP1210ReadThread* rp1210ReadThread;
+
+	// 4/23/2017 : ZH : 消息解析
+	class RP1210MsgParser* msgParser;
 
 protected slots:
 	void OnAutoBaudRate(bool bAuto);

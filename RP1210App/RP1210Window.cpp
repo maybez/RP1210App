@@ -2,6 +2,8 @@
 #include "RP1210IniData.h"
 #include "RP1210Core.h"
 #include "J1939FilterWindow.h"
+#include "RP1210ReadThread.h"
+#include "RP1210MsgParser.h"
 
 #include <QMessageBox>
 
@@ -14,9 +16,14 @@ RP1210Window::RP1210Window(QWidget *parent)
 	IniData = RP1210IniData::GetInistance();
 	IniData->ReadMainIniFile();
 	rp1210Core = RP1210Core::GetInstance();
+	rp1210ReadThread = new RP1210ReadThread(rp1210Core, this);  
+	msgParser = new RP1210MsgParser(this);
+
+	ui.tableViewMsg->setModel(msgParser);
+	connect(rp1210ReadThread, &RP1210ReadThread::MsgReady, msgParser, &RP1210MsgParser::OnMessage,Qt::QueuedConnection);
 
 	connect(IniData, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
-	connect(rp1210Core, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
+	connect(rp1210Core, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)),Qt::QueuedConnection);
 	connect(ui.checkBoxAutoBaudRate, SIGNAL(toggled(bool)), this,SLOT(OnAutoBaudRate(bool)));
 
 	connect(ui.pushButtonConnect, SIGNAL(clicked()), this, SLOT(OnConnect()));
@@ -78,6 +85,13 @@ void RP1210Window::OnConnect()
 		// 4/18/2017 : ZH : 如果是J1939协议 
 		rp1210Core->ClaimJ1939Address(J1939_OFFBOARD_DIAGNOSTICS_TOOL_1);
 
+		// 4/23/2017 : ZH : 设置过滤器为全部通过
+		rp1210Core->SetAllFilterStatesToPass();
+	
+		// 4/23/2017 : ZH : 开启读取线程
+		rp1210ReadThread->SetNeedExit(false);
+		rp1210ReadThread->start();
+
 		ui.pushButtonConnect->setEnabled(false);
 		ui.pushButtonDisConnect->setEnabled(true);
 	}
@@ -89,7 +103,9 @@ void RP1210Window::OnConnect()
 
 void RP1210Window::OnDisConnect()
 {
+	rp1210ReadThread->SetNeedExit(true);
 	short ErrorCode = rp1210Core->ClientDisconnect();
+
 	if (ErrorCode == NO_ERRORS)
 	{ 
 		ui.pushButtonConnect->setEnabled(true);
