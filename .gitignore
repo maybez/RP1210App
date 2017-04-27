@@ -16,3 +16,5 @@
 /Win32/Release
 /Debug
 
+*.suo
+*.sdf

@@ -20,6 +20,8 @@ public:
 	QVariant data(const QModelIndex& index, int role)const override;
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const override;
 
+	QString GetMessageString(int row);
+
 public slots:
     // 4/23/2017 : ZH : 接收并解析消息
 	void OnMessage(QByteArray data);

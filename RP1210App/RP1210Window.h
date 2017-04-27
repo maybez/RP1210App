@@ -34,7 +34,12 @@ protected slots:
 	void OnDisConnect();
 	void OnClearLog();
 	void OnFilterWindow();
-	void OnScrollRangeChanged(int min, int max);
+	void OnScrollRangeChanged(int min, int max); 
+
+	//4/27/2017 ZH :上下文菜单
+	void OnSelectAll();
+	void OnCopy();
+	void OnSaveToFile();
 
 public slots:
 	void OnLogMsg(QString Msg);
@@ -46,4 +51,7 @@ private:
 
 	// 4/19/2017 : ZH : 私有，辅助函数，创建过滤器窗口并连接好各种信号槽
 	void SetUpFilterWindow();
+
+	//4/27/2017 ZH : 私有，辅助函数，设置好表格视图
+	void SetUpTableView();
 };

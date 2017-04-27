@@ -5,6 +5,7 @@
 #include "RP1210ReadThread.h"
 #include "RP1210MsgParser.h"
 
+#include <QClipboard>
 #include <QMessageBox>
 #include <QScrollBar>
 
@@ -18,11 +19,8 @@ RP1210Window::RP1210Window(QWidget *parent)
 	IniData->ReadMainIniFile();
 	rp1210Core = RP1210Core::GetInstance();
 	rp1210ReadThread = new RP1210ReadThread(rp1210Core, this);  
-	msgParser = new RP1210MsgParser(this);
 
-	ui.tableViewMsg->setModel(msgParser);
-	connect(rp1210ReadThread, &RP1210ReadThread::MsgReady, msgParser, &RP1210MsgParser::OnMessage,Qt::QueuedConnection);
-	connect(ui.tableViewMsg->verticalScrollBar(), &QScrollBar::rangeChanged, this,&RP1210Window::OnScrollRangeChanged);
+	SetUpTableView();
 
 	connect(IniData, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)));
 	connect(rp1210Core, SIGNAL(LogMsg(QString)), this, SLOT(OnLogMsg(QString)),Qt::QueuedConnection);
@@ -142,6 +140,35 @@ void RP1210Window::OnScrollRangeChanged(int min, int max)
 	ui.tableViewMsg->verticalScrollBar()->setValue(max);
 }
 
+void RP1210Window::OnSelectAll()
+{
+	QItemSelectionModel* selectionModel = ui.tableViewMsg->selectionModel();
+
+	QModelIndex topLeft = msgParser->index(0, 0, QModelIndex());
+	QModelIndex bottomRight = msgParser->index(msgParser->rowCount(QModelIndex())-1, msgParser->columnCount(QModelIndex())-1,QModelIndex());
+	QItemSelection selection(topLeft, bottomRight);
+
+	selectionModel->select(selection, QItemSelectionModel::Select);
+}
+
+void RP1210Window::OnCopy()
+{
+	QItemSelectionModel* selectionModel = ui.tableViewMsg->selectionModel();
+
+	QModelIndexList selectedRows = selectionModel->selectedRows();
+
+
+	QString strTemp = "";
+
+	for each (QModelIndex item in selectedRows)
+	{
+		strTemp += (msgParser->GetMessageString(item.row())+"\r\n");
+	}
+
+	QClipboard* clipBoard = QApplication::clipboard();
+	clipBoard->setText(strTemp);
+} 
+
 void RP1210Window::OnLogMsg(QString Msg)
 {
 	ui.textBrowserLogMsg->append(Msg);
@@ -165,5 +192,25 @@ void RP1210Window::SetUpFilterWindow()
 {
 	J1939FilterDialog = new J1939FilterWindow(this);
 	J1939FilterDialog->SetRp1210Core(rp1210Core);
+} 
+
+void RP1210Window::SetUpTableView()
+{
+	// 绑定model 和view
+	msgParser = new RP1210MsgParser(this);
+	ui.tableViewMsg->setModel(msgParser);
+
+	connect(rp1210ReadThread, &RP1210ReadThread::MsgReady, msgParser, &RP1210MsgParser::OnMessage, Qt::QueuedConnection);
+
+	//4/27/2017 ZH :表格视图的上下文菜单
+	QAction* selectAllAction = new QAction(tr("Select All"),this);
+	QAction* copyAction = new QAction(tr("Copy"),this);
+	connect(selectAllAction, &QAction::triggered, this, &RP1210Window::OnSelectAll);
+	connect(copyAction, &QAction::triggered, this, &RP1210Window::OnCopy);
+	ui.tableViewMsg->setContextMenuPolicy(Qt::ActionsContextMenu);
+	ui.tableViewMsg->addAction(selectAllAction);
+	ui.tableViewMsg->addAction(copyAction);		
+
+	connect(ui.tableViewMsg->verticalScrollBar(), &QScrollBar::rangeChanged, this, &RP1210Window::OnScrollRangeChanged);	
 }
 

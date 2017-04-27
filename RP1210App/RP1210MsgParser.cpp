@@ -114,6 +114,11 @@ QVariant RP1210MsgParser::headerData(int section, Qt::Orientation orientation, i
 	return QVariant();
 }
 
+QString RP1210MsgParser::GetMessageString(int row)
+{
+	return j1939MsgList.at(row).GetRawMsgString();
+}
+
 void RP1210MsgParser::OnMessage(QByteArray data)
 {
 	J1939Message msg(data, false);

@@ -30,6 +30,7 @@ MessageBase::MessageBase(QByteArray rawMsg, bool useEcho /*= false*/)
 		Echo = -1;
 		Data = RawMsg.mid(4);
 	}
+	GetRawMsgString();
 }
 
 MessageBase::~MessageBase()
