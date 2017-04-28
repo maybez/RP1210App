@@ -135,6 +135,25 @@ void RP1210Window::OnFilterWindow()
 	J1939FilterDialog->activateWindow();
 }
 
+void RP1210Window::OnSelectionChanged(QItemSelection selected, QItemSelection deSelected)
+{
+	QItemSelectionModel* selectionModel = ui.tableViewMsg->selectionModel();
+	QModelIndexList selectedRows = selectionModel->selectedRows();
+
+	if (!selectedRows.empty())     //4/28/2017 ZH :有选中项
+	{
+		copyAction->setEnabled(true);
+		deleteAction->setEnabled(true);
+		logtoFileAction->setEnabled(true);
+	}
+	else                           //4/28/2017 ZH :无选中项
+	{
+		copyAction->setEnabled(false);
+		deleteAction->setEnabled(false);
+		logtoFileAction->setEnabled(false);
+	}
+}
+
 void RP1210Window::OnScrollRangeChanged(int min, int max)
 {
 	ui.tableViewMsg->verticalScrollBar()->setValue(max);
@@ -149,6 +168,21 @@ void RP1210Window::OnSelectAll()
 	QItemSelection selection(topLeft, bottomRight);
 
 	selectionModel->select(selection, QItemSelectionModel::Select);
+}
+
+void RP1210Window::OnClearAll()
+{
+	msgParser->ClearAllMessage(); 
+}
+
+void RP1210Window::OnDelete()
+{
+	QItemSelectionModel* selectionModel = ui.tableViewMsg->selectionModel();
+	
+
+	QModelIndexList selectedRows = selectionModel->selectedRows(); 
+
+	msgParser->DeleteMessage(selectedRows);
 }
 
 void RP1210Window::OnCopy()
@@ -169,6 +203,18 @@ void RP1210Window::OnCopy()
 	clipBoard->setText(strTemp);
 } 
 
+void RP1210Window::OnLogtoFile()
+{
+	bool isChecked = logtoFileAction->isChecked();
+	if (isChecked)
+	{
+
+	}
+	else
+	{
+
+	}
+}
 void RP1210Window::OnLogMsg(QString Msg)
 {
 	ui.textBrowserLogMsg->append(Msg);
@@ -203,14 +249,35 @@ void RP1210Window::SetUpTableView()
 	connect(rp1210ReadThread, &RP1210ReadThread::MsgReady, msgParser, &RP1210MsgParser::OnMessage, Qt::QueuedConnection);
 
 	//4/27/2017 ZH :表格视图的上下文菜单
-	QAction* selectAllAction = new QAction(tr("Select All"),this);
-	QAction* copyAction = new QAction(tr("Copy"),this);
-	connect(selectAllAction, &QAction::triggered, this, &RP1210Window::OnSelectAll);
-	connect(copyAction, &QAction::triggered, this, &RP1210Window::OnCopy);
-	ui.tableViewMsg->setContextMenuPolicy(Qt::ActionsContextMenu);
+	selectAllAction = new QAction(tr("Select All"), this);
+	clearAllAction = new QAction(tr("Clear All"), this); 
+	copyAction = new QAction(tr("Copy"), this);
+	deleteAction = new QAction(tr("Delete"), this); 
+	logtoFileAction = new QAction(tr("Log to file"), this);
+	logtoFileAction->setCheckable(true);
+	logtoFileAction->setChecked(true);
+
+	separator01Action = new QAction(this);
+	separator02Action = new QAction(this);
+	separator01Action->setSeparator(true);
+	separator02Action->setSeparator(true);
+
 	ui.tableViewMsg->addAction(selectAllAction);
-	ui.tableViewMsg->addAction(copyAction);		
+	ui.tableViewMsg->addAction(clearAllAction);
+	ui.tableViewMsg->addAction(separator01Action);
+	ui.tableViewMsg->addAction(copyAction);
+	ui.tableViewMsg->addAction(deleteAction);
+	ui.tableViewMsg->addAction(separator02Action);
+	ui.tableViewMsg->addAction(logtoFileAction);
+	ui.tableViewMsg->setContextMenuPolicy(Qt::ActionsContextMenu);
+
+	connect(selectAllAction, &QAction::triggered, this, &RP1210Window::OnSelectAll);
+	connect(clearAllAction, &QAction::triggered, this, &RP1210Window::OnClearAll);
+	connect(copyAction, &QAction::triggered, this, &RP1210Window::OnCopy);
+	connect(deleteAction, &QAction::triggered, this, &RP1210Window::OnDelete);
+	connect(logtoFileAction, &QAction::triggered, this, &RP1210Window::OnLogtoFile);
 
 	connect(ui.tableViewMsg->verticalScrollBar(), &QScrollBar::rangeChanged, this, &RP1210Window::OnScrollRangeChanged);	
+	connect(ui.tableViewMsg->selectionModel(), &QItemSelectionModel::selectionChanged, this, &RP1210Window::OnSelectionChanged); 
 }
 

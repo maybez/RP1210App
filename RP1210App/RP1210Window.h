@@ -15,6 +15,14 @@ private:
     Ui::RP1210WindowClass ui;
 	class J1939FilterWindow* J1939FilterDialog;
 
+	QAction* selectAllAction;
+	QAction* clearAllAction;
+	QAction* copyAction;
+	QAction* deleteAction;
+	QAction* logtoFileAction;
+	QAction* separator01Action;
+	QAction* separator02Action;
+
 private:
 	// 4/16/2017 : ZH : ini文件中获取到的数据
 	class RP1210IniData* IniData;
@@ -34,12 +42,16 @@ protected slots:
 	void OnDisConnect();
 	void OnClearLog();
 	void OnFilterWindow();
-	void OnScrollRangeChanged(int min, int max); 
+
+	void OnSelectionChanged(QItemSelection selected,QItemSelection deSelected);
+	void OnScrollRangeChanged(int min, int max);
 
 	//4/27/2017 ZH :上下文菜单
 	void OnSelectAll();
+	void OnClearAll();
+	void OnDelete();
 	void OnCopy();
-	void OnSaveToFile();
+	void OnLogtoFile();
 
 public slots:
 	void OnLogMsg(QString Msg);

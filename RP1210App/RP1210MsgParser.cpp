@@ -6,19 +6,14 @@ RP1210MsgParser::RP1210MsgParser(QObject *parent)
 	j1939MsgList.clear();
 
 	// 测试代码
-	char tmp1[] = { 0x04,0xF6,0xFE,0x29,0xF1,0xFE,0x00,0x06,0x00,0xFF,0xFC,0x00,0x00,0xFC,0xFF,0x00,0x00,0xFF };
-	char tmp2[] = { 0x04,0xF6,0xFE,0x30,0xF1,0xFE,0x00,0x06,0x00,0xFF,0xFC,0x00,0x00,0xFC,0xFF,0x00,0x00,0xFF };
-	char tmp3[] = { 0x04,0xF6,0xFE,0x50,0xF1,0xFE,0x00,0x06,0x00,0xFF,0xFC,0x00,0x00,0xFC,0xFF,0x00,0x00,0xFF };
-	QByteArray arr1(tmp1, sizeof(tmp1));
-	QByteArray arr2(tmp2, sizeof(tmp2));
-	QByteArray arr3(tmp3, sizeof(tmp3));
-
-	j1939MsgList.append(J1939Message(arr1, false));
-	j1939MsgList.append(J1939Message(arr2, false));
-	j1939MsgList.append(J1939Message(arr3, false));
-	j1939MsgList.append(J1939Message(arr2, false));
-	j1939MsgList.append(J1939Message(arr3, false));
-	j1939MsgList.append(J1939Message(arr1, false)); 
+	//char tmp1[] = { 0x04,0xF6,0xFE,0x29,0xF1,0xFE,0x00,0x06,0x00,0xFF,0xFC,0x00,0x00,0xFC,0xFF,0x00,0x00,0xFF };
+	char tmp[] = { 0x00,0x00,0x00,0x00,0xF1,0xFE,0x00,0x06,0x00,0xFF,0xFC,0x00,0x00,0xFC,0xFF,0x00,0x00,0xFF };
+	QByteArray arr(tmp, sizeof(tmp));
+	for (int i = 0; i < 100; ++i)
+	{
+		j1939MsgList.append(J1939Message(arr, false));
+		arr[3] = arr[3] + 1;
+	}
 }
 
 RP1210MsgParser::~RP1210MsgParser()
@@ -117,6 +112,34 @@ QVariant RP1210MsgParser::headerData(int section, Qt::Orientation orientation, i
 QString RP1210MsgParser::GetMessageString(int row)
 {
 	return j1939MsgList.at(row).GetRawMsgString();
+}
+
+void RP1210MsgParser::ClearAllMessage()
+{
+	beginResetModel();
+	j1939MsgList.clear();
+	endResetModel();
+}
+
+void RP1210MsgParser::DeleteMessage(QModelIndexList& msgs)
+{	
+	QMap<int, int>rowMap;
+	for each(QModelIndex msg in msgs)
+	{
+		rowMap.insert(msg.row(), 0);
+	}
+
+	QMapIterator<int, int> it(rowMap);
+	it.toBack();
+
+	// 利用QMap是存储数据是有序的，并且不会重复存储key值。
+	beginResetModel();
+	while (it.hasPrevious())
+	{
+		it.previous();
+		j1939MsgList.removeAt(it.key());
+	}
+	endResetModel();
 }
 
 void RP1210MsgParser::OnMessage(QByteArray data)
