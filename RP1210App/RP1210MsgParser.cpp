@@ -1,4 +1,9 @@
 #include "RP1210MsgParser.h"
+#include <QDir>
+#include <QFile>
+#include <QDateTime>
+#include <QCoreApplication>
+#include <QMessageBox>
 
 RP1210MsgParser::RP1210MsgParser(QObject *parent)
 	: QAbstractTableModel(parent)
@@ -140,7 +145,7 @@ void RP1210MsgParser::DeleteMessage(QModelIndexList& msgs)
 		j1939MsgList.removeAt(it.key());
 	}
 	endResetModel();
-}
+} 
 
 void RP1210MsgParser::OnMessage(QByteArray data)
 {

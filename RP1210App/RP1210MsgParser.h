@@ -25,16 +25,15 @@ public:
 	void ClearAllMessage();
 	void DeleteMessage(QModelIndexList& msgs);
 
-
-public slots:
-    // 4/23/2017 : ZH : 接收并解析消息
+	public slots:
+	// 4/23/2017 : ZH : 接收并解析消息
 	void OnMessage(QByteArray data);
 
 private:
 	// 4/23/2017 : ZH : 保存消息
 	QList<J1939Message> j1939MsgList;
-};
 
+};
 
 
 

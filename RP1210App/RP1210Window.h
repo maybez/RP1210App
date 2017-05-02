@@ -36,6 +36,9 @@ private:
 	// 4/23/2017 : ZH : 消息解析
 	class RP1210MsgParser* msgParser;
 
+	//5/2/2017 ZH : ZH : 消息记录
+	class RP1210MsgLogger* msgLogger;
+
 protected slots:
 	void OnAutoBaudRate(bool bAuto);
 	void OnConnect();

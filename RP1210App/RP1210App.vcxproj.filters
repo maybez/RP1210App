@@ -121,6 +121,15 @@
     <ClCompile Include="MessageDef.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GeneratedFiles\Debug\moc_RP1210MsgLogger.cpp">
+      <Filter>Generated Files\Debug</Filter>
+    </ClCompile>
+    <ClCompile Include="GeneratedFiles\Release\moc_RP1210MsgLogger.cpp">
+      <Filter>Generated Files\Release</Filter>
+    </ClCompile>
+    <ClCompile Include="RP1210MsgLogger.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="RP1210Window.h">
@@ -154,6 +163,9 @@
       <Filter>Header Files</Filter>
     </CustomBuild>
     <CustomBuild Include="RP1210MsgParser.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <CustomBuild Include="RP1210MsgLogger.h">
       <Filter>Header Files</Filter>
     </CustomBuild>
   </ItemGroup>
